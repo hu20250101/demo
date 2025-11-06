@@ -1,0 +1,93 @@
+# Copyright (c) 2020 Project CHIP Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Build example - EFR32
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}-${{ (github.event_name == 'pull_request' && github.event.number) || (github.event_name == 'workflow_dispatch' && github.run_number) || github.sha }}
+  cancel-in-progress: true
+
+env:
+  CHIP_NO_LOG_TIMESTAMPS: true
+  snbAccessKey: ${{ secrets.IOT_ACCESS_KEY }}
+  snbSecretKey: ${{ secrets.IOT_SECRET_KEY }}
+  snbSignDataKey: ${{ secrets.IOT_SIGN_DATA_KEY_ID }}
+  serviceAddress: ${{ secrets.IOT_SERVICE_ADDRESS }}
+  appFirmwareType: "Application"
+  bootloaderFirmwareType: "Bootloader"
+  appFirmwareResourcePackageId: ${{ secrets.APPFIRMWARERESOURCEPACKAGEID }}
+  bootloaderResourcePackageId: ${{ secrets.BOOTLOADERRESOURCEPACKAGEID }}
+  cliVersion: ${{ vars.CLIVERSION }}
+  obisEnv: ${{ vars.OBIS_ENV }}
+
+jobs:
+  efr32:
+    name: EFR32
+
+    env:
+      SILABS_BOARD: BRD2703A
+      BUILD_TYPE: gn_efr32
+
+    runs-on: ubuntu-latest
+    if: github.actor != 'restyled-io[bot]'
+
+    container:
+      image: ghcr.io/project-chip/chip-build-efr32:94
+      volumes:
+        - "/tmp/bloat_reports:/tmp/bloat_reports"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Checkout submodules & Bootstrap
+        uses: ./.github/actions/checkout-submodules-and-bootstrap
+        with:
+          platform: silabs_docker
+
+      - name: Set up environment for size reports
+        uses: ./.github/actions/setup-size-reports
+        if: ${{ !env.ACT }}
+        with:
+          gh-context: ${{ toJson(github) }}
+
+      - name: Set up command and push
+        run: |
+          ln -s $(pwd)/snb /usr/local/bin/snb && \
+          snb config --serviceAddress $serviceAddress --accessKey $snbAccessKey --secretKey $snbSecretKey && \
+          snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId
+
+
+      - name: Publish light-application-firmware
+        id: upload_light-application-firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: light-application-firmware
+          path: |
+            raw-silabs-lighting.s37
+
+
+      - name: Echo artifact download URL
+        run: |
+          APPLICATION_DOWNLOAD_URL="${{ steps.upload_light-application-firmware.outputs.artifact-url }}"
+          echo "Artifact application download URL: $APPLICATION_DOWNLOAD_URL"
+          
+
+          
+          
