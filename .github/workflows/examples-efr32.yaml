@@ -56,18 +56,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Checkout submodules & Bootstrap
-        uses: ./.github/actions/checkout-submodules-and-bootstrap
-        with:
-          platform: silabs_docker
-
 
       - name: Set up command and push
         run: |
           ln -s $(pwd)/snb /usr/local/bin/snb && \
           snb config --serviceAddress $serviceAddress --accessKey $snbAccessKey --secretKey $snbSecretKey && \
           snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId
-
 
       - name: Publish light-application-firmware
         id: upload_light-application-firmware
@@ -76,7 +70,6 @@ jobs:
           name: light-application-firmware
           path: |
             raw-silabs-lighting.s37
-
 
       - name: Echo artifact download URL
         run: |
