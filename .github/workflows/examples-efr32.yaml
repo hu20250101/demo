@@ -61,11 +61,6 @@ jobs:
         with:
           platform: silabs_docker
 
-      - name: Set up environment for size reports
-        uses: ./.github/actions/setup-size-reports
-        if: ${{ !env.ACT }}
-        with:
-          gh-context: ${{ toJson(github) }}
 
       - name: Set up command and push
         run: |
