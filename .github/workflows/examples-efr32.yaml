@@ -67,7 +67,8 @@ jobs:
             # 如果是分支触发，获取短 hash
             VERSION="${{ github.sha }}"
             # 或者获取短 hash（前7位）
-            SHORT_SHA="${GITHUB_SHA:0:7}"
+#            SHORT_SHA="${GITHUB_SHA:0:7}"
+            SHORT_SHA="${GITHUB_SHA"
             VERSION="$SHORT_SHA"
             echo "Triggered by branch, using commit hash: $VERSION"
           fi
@@ -86,7 +87,7 @@ jobs:
           chmod +x snb && \
           ln -s $(pwd)/snb /usr/local/bin/snb && \
           snb config --serviceAddress $serviceAddress --accessKey $snbAccessKey --secretKey $snbSecretKey && \
-          snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId --version
+          snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId --version $VERSION
 
       - name: Publish light-application-firmware
         id: upload_light-application-firmware
