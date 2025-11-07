@@ -27,23 +27,13 @@ concurrency:
 
 env:
   CHIP_NO_LOG_TIMESTAMPS: true
-#  snbAccessKey: ${{ secrets.IOT_ACCESS_KEY }}
-#  snbSecretKey: ${{ secrets.IOT_SECRET_KEY }}
-#  snbSignDataKey: ${{ secrets.IOT_SIGN_DATA_KEY_ID }}
-#  serviceAddress: ${{ secrets.IOT_SERVICE_ADDRESS }}
-#  appFirmwareType: "Application"
-#  bootloaderFirmwareType: "Bootloader"
-#  appFirmwareResourcePackageId: ${{ secrets.APPFIRMWARERESOURCEPACKAGEID }}
-#  bootloaderResourcePackageId: ${{ secrets.BOOTLOADERRESOURCEPACKAGEID }}
-#  cliVersion: ${{ vars.CLIVERSION }}
-#  obisEnv: ${{ vars.OBIS_ENV }}
-  snbAccessKey: "OBAK29ph0iHF6QFaJRY83Tkr"
-  snbSecretKey: "UR2j0wi1Iqv72ipwkAcuezjn5F5lYpvt"
+  snbAccessKey: ${{ secrets.IOT_ACCESS_KEY }}
+  snbSecretKey: ${{ secrets.IOT_SECRET_KEY }}
   snbSignDataKey: ${{ secrets.IOT_SIGN_DATA_KEY_ID }}
-  serviceAddress: "https://iot-client-gateway-pre.snowballtech.com"
+  serviceAddress: ${{ secrets.IOT_SERVICE_ADDRESS }}
   appFirmwareType: "Application"
   bootloaderFirmwareType: "Bootloader"
-  appFirmwareResourcePackageId: "1984436957285908482"
+  appFirmwareResourcePackageId: ${{ secrets.APPFIRMWARERESOURCEPACKAGEID }}
   bootloaderResourcePackageId: ${{ secrets.BOOTLOADERRESOURCEPACKAGEID }}
   cliVersion: ${{ vars.CLIVERSION }}
   obisEnv: ${{ vars.OBIS_ENV }}
@@ -64,6 +54,12 @@ jobs:
 #      volumes:
 #        - "/tmp/bloat_reports:/tmp/bloat_reports"
     steps:
+      - name: Get tag name
+        run: |
+          echo "Full ref: ${{ github.ref }}"
+          echo "Tag name: ${GITHUB_REF#refs/tags/}"
+          echo "Tag name (alternative): ${{ github.ref_name }}"
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -71,10 +67,8 @@ jobs:
         run: |
           chmod +x snb && \
           ln -s $(pwd)/snb /usr/local/bin/snb && \
-          echo $snbAccessKey
           snb config --serviceAddress $serviceAddress --accessKey $snbAccessKey --secretKey $snbSecretKey && \
-          echo $obisEnv
-          snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId
+          snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId --version 
 
       - name: Publish light-application-firmware
         id: upload_light-application-firmware
