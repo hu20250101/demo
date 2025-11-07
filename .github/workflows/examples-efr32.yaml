@@ -45,6 +45,9 @@ jobs:
     env:
       SILABS_BOARD: BRD2703A
       BUILD_TYPE: gn_efr32
+      APP_VERSION: ${{
+        startsWith(github.ref, 'refs/tags/') && github.ref_name || github.sha[0]
+        }}
 
     runs-on: ubuntu-latest
     if: github.actor != 'restyled-io[bot]'
@@ -54,11 +57,30 @@ jobs:
 #      volumes:
 #        - "/tmp/bloat_reports:/tmp/bloat_reports"
     steps:
-      - name: Get tag name
+      - name: Get tag or commit hash
         run: |
           echo "Full ref: ${{ github.ref }}"
-          echo "Tag name: ${GITHUB_REF#refs/tags/}"
-          echo "Tag name (alternative): ${{ github.ref_name }}"
+          echo "Ref name: ${{ github.ref_name }}"
+
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            # 如果是 tag 触发
+            VERSION="${{ github.ref_name }}"
+            echo "Triggered by tag: $VERSION"
+          else
+            # 如果是分支触发，获取短 hash
+            VERSION="${{ github.sha }}"
+            # 或者获取短 hash（前7位）
+            SHORT_SHA="${GITHUB_SHA:0:7}"
+            VERSION="$SHORT_SHA"
+            echo "Triggered by branch, using commit hash: $VERSION"
+          fi
+
+          echo "Final version: $VERSION"
+          
+          echo $APP_VERSION
+
+          # 设置环境变量供后续步骤使用
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
