@@ -61,8 +61,10 @@ jobs:
         run: |
           chmod +x snb && \
           ln -s $(pwd)/snb /usr/local/bin/snb && \
+          echo $snbAccessKey
           snb config --serviceAddress $serviceAddress --accessKey $snbAccessKey --secretKey $snbSecretKey && \
           echo $obisEnv && \
+          cat ~/.snb/config.ini
           snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId
 
       - name: Publish light-application-firmware
