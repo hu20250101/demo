@@ -87,7 +87,7 @@ jobs:
           chmod +x snb && \
           ln -s $(pwd)/snb /usr/local/bin/snb && \
           snb config --serviceAddress $serviceAddress --accessKey $snbAccessKey --secretKey $snbSecretKey && \
-          snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId --version $VERSION
+          snb obis push --fileType $appFirmwareType --file silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId --version $VERSION
 
       - name: Publish light-application-firmware
         id: upload_light-application-firmware
@@ -95,7 +95,7 @@ jobs:
         with:
           name: light-application-firmware
           path: |
-            raw-silabs-lighting.s37
+            silabs-lighting.s37
 
       - name: Echo artifact download URL
         run: |
