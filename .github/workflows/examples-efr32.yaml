@@ -27,13 +27,23 @@ concurrency:
 
 env:
   CHIP_NO_LOG_TIMESTAMPS: true
-  snbAccessKey: ${{ secrets.IOT_ACCESS_KEY }}
-  snbSecretKey: ${{ secrets.IOT_SECRET_KEY }}
+#  snbAccessKey: ${{ secrets.IOT_ACCESS_KEY }}
+#  snbSecretKey: ${{ secrets.IOT_SECRET_KEY }}
+#  snbSignDataKey: ${{ secrets.IOT_SIGN_DATA_KEY_ID }}
+#  serviceAddress: ${{ secrets.IOT_SERVICE_ADDRESS }}
+#  appFirmwareType: "Application"
+#  bootloaderFirmwareType: "Bootloader"
+#  appFirmwareResourcePackageId: ${{ secrets.APPFIRMWARERESOURCEPACKAGEID }}
+#  bootloaderResourcePackageId: ${{ secrets.BOOTLOADERRESOURCEPACKAGEID }}
+#  cliVersion: ${{ vars.CLIVERSION }}
+#  obisEnv: ${{ vars.OBIS_ENV }}
+  snbAccessKey: "OBAK29ph0iHF6QFaJRY83Tkr"
+  snbSecretKey: "UR2j0wi1Iqv72ipwkAcuezjn5F5lYpvt"
   snbSignDataKey: ${{ secrets.IOT_SIGN_DATA_KEY_ID }}
-  serviceAddress: ${{ secrets.IOT_SERVICE_ADDRESS }}
+  serviceAddress: "https://iot-client-gateway-pre.snowballtech.com"
   appFirmwareType: "Application"
   bootloaderFirmwareType: "Bootloader"
-  appFirmwareResourcePackageId: ${{ secrets.APPFIRMWARERESOURCEPACKAGEID }}
+  appFirmwareResourcePackageId: "1984436957285908482"
   bootloaderResourcePackageId: ${{ secrets.BOOTLOADERRESOURCEPACKAGEID }}
   cliVersion: ${{ vars.CLIVERSION }}
   obisEnv: ${{ vars.OBIS_ENV }}
