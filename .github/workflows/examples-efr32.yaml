@@ -45,9 +45,6 @@ jobs:
     env:
       SILABS_BOARD: BRD2703A
       BUILD_TYPE: gn_efr32
-      APP_VERSION: ${{
-        startsWith(github.ref, 'refs/tags/') && github.ref_name || github.sha[0]
-        }}
 
     runs-on: ubuntu-latest
     if: github.actor != 'restyled-io[bot]'
@@ -77,20 +74,17 @@ jobs:
 
           echo "Final version: $VERSION"
           
-          echo $APP_VERSION
-
-          # 设置环境变量供后续步骤使用
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up command and push
         run: |
+          echo $VERSION
           chmod +x snb && \
           ln -s $(pwd)/snb /usr/local/bin/snb && \
           snb config --serviceAddress $serviceAddress --accessKey $snbAccessKey --secretKey $snbSecretKey && \
-          snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId --version 
+          snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId --version
 
       - name: Publish light-application-firmware
         id: upload_light-application-firmware
