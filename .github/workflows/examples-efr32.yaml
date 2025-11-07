@@ -49,10 +49,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor != 'restyled-io[bot]'
 
-    container:
-      image: ghcr.io/project-chip/chip-build-efr32:94
-      volumes:
-        - "/tmp/bloat_reports:/tmp/bloat_reports"
+#    container:
+#      image: ghcr.io/project-chip/chip-build-efr32:94
+#      volumes:
+#        - "/tmp/bloat_reports:/tmp/bloat_reports"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,7 +63,8 @@ jobs:
           ln -s $(pwd)/snb /usr/local/bin/snb && \
           echo $snbAccessKey
           snb config --serviceAddress $serviceAddress --accessKey $snbAccessKey --secretKey $snbSecretKey && \
-          echo $obisEnv && \
+          echo $obisEnv
+          curl https://iot-client-gateway-pre.snowballtech.com
           snb obis push --fileType $appFirmwareType --file raw-silabs-lighting.s37 --env $obisEnv --resourcePackageId $appFirmwareResourcePackageId
 
       - name: Publish light-application-firmware
