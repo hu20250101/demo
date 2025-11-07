@@ -73,6 +73,8 @@ jobs:
           fi
 
           echo "Final version: $VERSION"
+          # 将 VERSION 写入 GITHUB_ENV，供后续步骤使用
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
           
 
       - name: Checkout
