@@ -67,7 +67,7 @@ jobs:
             # 如果是分支触发，获取短 hash
             VERSION="${{ github.sha }}"
             # 或者获取短 hash（前7位）
-#            SHORT_SHA="${GITHUB_SHA:0:7}"
+            #SHORT_SHA="${GITHUB_SHA:0:7}"
             SHORT_SHA="${GITHUB_SHA"
             VERSION="$SHORT_SHA"
             echo "Triggered by branch, using commit hash: $VERSION"
